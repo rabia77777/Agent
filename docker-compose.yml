@@ -1,0 +1,46 @@
+version: "3.9"
+
+services:
+  mongo:
+    image: mongo:7
+    container_name: dispatcher_mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build: ./backend
+    container_name: dispatcher_backend
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_DB_NAME=${MONGO_DB_NAME}
+      - BACKEND_PORT=${BACKEND_PORT}
+      - BACKEND_HOST=${BACKEND_HOST}
+      - ALLOWED_ORIGINS=${ALLOWED_ORIGINS}
+      - AVERAGE_SPEED_MPH=${AVERAGE_SPEED_MPH}
+    depends_on:
+      - mongo
+    ports:
+      - "8000:8000"
+
+  frontend:
+    build: ./frontend
+    container_name: dispatcher_frontend
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    environment:
+      - VITE_BACKEND_URL=${VITE_BACKEND_URL}
+      - VITE_WEBSOCKET_URL=${VITE_WEBSOCKET_URL}
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+volumes:
+  mongo_data:
