@@ -13,6 +13,8 @@ class Settings(BaseSettings):
 
     average_speed_mph: float = Field(default=55.0, alias="AVERAGE_SPEED_MPH")
 
+    reset_db_on_start: bool = Field(default=True, alias="RESET_DB_ON_START")
+
     class Config:
         env_file = ".env"
         extra = "ignore"

@@ -16,6 +16,7 @@ async def notify_assignment(load_id: str, driver_id: str, eta_hours: float, dist
             "distance_miles": distance_miles,
         },
     )
+    # Optional: also push an updated assignments list event in a real system
 
 
 async def notify_message(message: str, load_id: Optional[str] = None, driver_id: Optional[str] = None) -> None:

@@ -93,3 +93,24 @@ class ChatResponse(BaseModel):
 
 class DriverStatusResponse(BaseModel):
     driver: Optional[Driver]
+
+
+class DriversListResponse(BaseModel):
+    drivers: List[Driver]
+
+
+class LoadsListResponse(BaseModel):
+    loads: List[Load]
+
+
+class AssignmentsListResponse(BaseModel):
+    assignments: List[Assignment]
+
+
+class UpdateAssignmentStatusRequest(BaseModel):
+    assignment_id: str
+    status: Literal["assigned", "in_transit", "delivered"]
+
+
+class UpdateAssignmentStatusResponse(BaseModel):
+    assignment: Assignment

@@ -2,18 +2,20 @@ from math import radians, cos, sin, asin, sqrt
 from typing import Optional, Tuple
 
 CITY_TO_COORDS = {
-    "los angeles": (34.0522, -118.2437),
-    "san francisco": (37.7749, -122.4194),
+    # Canada
+    "toronto": (43.6532, -79.3832),
+    "montreal": (45.5017, -73.5673),
+    "vancouver": (49.2827, -123.1207),
+    "calgary": (51.0447, -114.0719),
+    "edmonton": (53.5461, -113.4938),
+    "ottawa": (45.4215, -75.6972),
+    "winnipeg": (49.8954, -97.1385),
+    "quebec city": (46.8139, -71.2080),
+    "halifax": (44.6488, -63.5752),
+    "victoria": (48.4284, -123.3656),
+    # Keep a few US cities to allow cross-border demos if needed
     "seattle": (47.6062, -122.3321),
     "portland": (45.5152, -122.6784),
-    "phoenix": (33.4484, -112.0740),
-    "denver": (39.7392, -104.9903),
-    "dallas": (32.7767, -96.7970),
-    "houston": (29.7604, -95.3698),
-    "chicago": (41.8781, -87.6298),
-    "atlanta": (33.7490, -84.3880),
-    "miami": (25.7617, -80.1918),
-    "new york": (40.7128, -74.0060),
 }
 
 

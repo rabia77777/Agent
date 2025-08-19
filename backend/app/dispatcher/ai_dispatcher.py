@@ -17,13 +17,14 @@ from .notifier import notify_assignment, notify_message
 class Dispatcher:
     async def handle_message(self, message: str) -> Dict[str, Any]:
         msg = message.strip().lower()
-
+        print(f"handle_message: {msg}")
         # assign load L1001 to nearest/driver D1
-        m_assign = re.search(r"assign\s+load\s+(?P<load>L\w+)\s+(?:to\s+(?:(?:driver\s+(?P<driver>D\w+))|(?P<nearest>nearest)))?", msg)
+        m_assign = re.search(r"assign\s+load\s+(?P<load>l\w+)\s+(?:to\s+(?:(?:driver\s+(?P<driver>d\w+))|(?P<nearest>nearest)))?", msg)
         if m_assign:
             load_id = m_assign.group("load").upper()
             driver_id = m_assign.group("driver")
             nearest = m_assign.group("nearest") is not None
+            print(f"assign_driver: {load_id}, {driver_id}, {nearest}")
             return await self.assign_driver(load_id=load_id, driver_id=(driver_id.upper() if driver_id else None), nearest=nearest)
 
         # eta from X to Y
@@ -31,20 +32,23 @@ class Dispatcher:
         if m_eta:
             origin = m_eta.group("origin").strip()
             dest = m_eta.group("dest").strip()
+            print(f"route_eta: {origin}, {dest}")
             return await self.route_eta(origin, dest)
 
         # status of driver D1
-        m_status = re.search(r"status\s+of\s+driver\s+(?P<driver>D\w+)", msg)
+        m_status = re.search(r"status\s+of\s+driver\s+(?P<driver>d\w+)", msg)
         if m_status:
             driver_id = m_status.group("driver").upper()
             driver = await get_driver_by_id(driver_id)
+            print(f"get_driver_status: {driver_id}")
             return {"action": "get_driver_status", "data": {"driver": driver}}
 
         # notify customer for load L1001: some message
-        m_notify = re.search(r"notify\s+customer\s+for\s+load\s+(?P<load>L\w+)\s*:\s*(?P<note>.+)$", msg)
+        m_notify = re.search(r"notify\s+customer\s+for\s+load\s+(?P<load>l\w+)\s*:\s*(?P<note>.+)$", msg)
         if m_notify:
             load_id = m_notify.group("load").upper()
             note = m_notify.group("note").strip()
+            print(f"notify_message: {load_id}, {note}")
             await notify_message(note, load_id=load_id)
             return {"action": "notify", "data": {"delivered": True}}
 

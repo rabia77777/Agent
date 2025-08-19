@@ -27,6 +27,14 @@ async def update_driver_status(driver_id: str, status: str) -> None:
     await drivers.update_one({"_id": driver_id}, {"$set": {"status": status}})
 
 
+async def set_driver_available(driver_id: str) -> None:
+    drivers = get_collection("drivers")
+    await drivers.update_one(
+        {"_id": driver_id},
+        {"$set": {"status": "available"}, "$unset": {"assigned_load_id": ""}},
+    )
+
+
 async def get_load_by_id(load_id: str) -> Optional[Dict[str, Any]]:
     loads = get_collection("loads")
     return await loads.find_one({"_id": load_id})
@@ -35,6 +43,11 @@ async def get_load_by_id(load_id: str) -> Optional[Dict[str, Any]]:
 async def set_load_assigned(load_id: str) -> None:
     loads = get_collection("loads")
     await loads.update_one({"_id": load_id}, {"$set": {"status": "assigned"}})
+
+
+async def set_load_status(load_id: str, status: str) -> None:
+    loads = get_collection("loads")
+    await loads.update_one({"_id": load_id}, {"$set": {"status": status}})
 
 
 async def create_assignment(load_id: str, driver_id: str, eta_hours: float, distance_miles: float) -> Dict[str, Any]:
@@ -50,6 +63,30 @@ async def create_assignment(load_id: str, driver_id: str, eta_hours: float, dist
     }
     await assignments.insert_one(assignment)
     return assignment
+
+
+async def update_assignment_status(assignment_id: str, status: str) -> Optional[Dict[str, Any]]:
+    assignments = get_collection("assignments")
+    await assignments.update_one({"_id": assignment_id}, {"$set": {"status": status}})
+    return await assignments.find_one({"_id": assignment_id})
+
+
+async def list_all_drivers() -> List[Dict[str, Any]]:
+    drivers = get_collection("drivers")
+    cursor = drivers.find({})
+    return [doc async for doc in cursor]
+
+
+async def list_all_loads() -> List[Dict[str, Any]]:
+    loads = get_collection("loads")
+    cursor = loads.find({})
+    return [doc async for doc in cursor]
+
+
+async def list_all_assignments() -> List[Dict[str, Any]]:
+    assignments = get_collection("assignments")
+    cursor = assignments.find({})
+    return [doc async for doc in cursor]
 
 
 async def insert_many_if_empty(collection_name: str, documents: List[Dict[str, Any]]) -> None:

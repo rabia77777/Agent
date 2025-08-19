@@ -1,7 +1,7 @@
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from fastapi.middleware.cors import CORSMiddleware
 from .config import settings
-from .db import connect_to_mongo, close_mongo_connection
+from .db import connect_to_mongo, close_mongo_connection, get_db
 from .realtime.websocket import manager
 from .routers.endpoints import router as api_router
 from .routers.chat import router as chat_router
@@ -25,6 +25,12 @@ app.include_router(chat_router)
 @app.on_event("startup")
 async def on_startup():
     await connect_to_mongo()
+    # Optionally reset DB for fresh demo data
+    if settings.reset_db_on_start:
+        db = get_db()
+        await db.drop_collection("drivers")
+        await db.drop_collection("loads")
+        await db.drop_collection("assignments")
     await seed()
 
 
